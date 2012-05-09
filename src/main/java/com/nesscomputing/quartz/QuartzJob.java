@@ -1,6 +1,6 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
-import static ness.quartz.NessQuartzModule.NESS_JOB_NAME;
+import static com.nesscomputing.quartz.NessQuartzModule.NESS_JOB_NAME;
 
 import java.io.Serializable;
 import java.util.UUID;

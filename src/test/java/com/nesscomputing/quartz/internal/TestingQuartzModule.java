@@ -1,4 +1,4 @@
-package ness.quartz.internal;
+package com.nesscomputing.quartz.internal;
 
 import org.junit.Ignore;
 import org.weakref.jmx.MBeanExporter;

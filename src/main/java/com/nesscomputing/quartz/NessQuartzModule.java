@@ -1,4 +1,4 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import java.util.Iterator;
 import java.util.Properties;

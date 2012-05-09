@@ -1,4 +1,4 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import java.net.URI;
 
@@ -19,6 +19,7 @@ import org.quartz.Scheduler;
 import org.quartz.Trigger;
 
 import com.nesscomputing.config.Config;
+import com.nesscomputing.quartz.AdHocQuartzJob;
 
 public class TestQuartzJobBuilder extends EasyMockSupport
 {

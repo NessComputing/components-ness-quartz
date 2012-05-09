@@ -1,4 +1,4 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import org.junit.Ignore;
 import org.quartz.Job;

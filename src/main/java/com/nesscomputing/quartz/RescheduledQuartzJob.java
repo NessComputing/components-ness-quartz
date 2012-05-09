@@ -1,4 +1,4 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import org.joda.time.DateTime;
 import org.quartz.Scheduler;

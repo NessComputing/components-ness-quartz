@@ -1,4 +1,4 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import org.skife.config.Config;
 import org.skife.config.Default;

@@ -1,22 +1,19 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import java.net.URI;
 
 import junit.framework.Assert;
 
-import ness.quartz.internal.TestingQuartzModule;
-
 import org.junit.Test;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+import com.nesscomputing.quartz.internal.TestingQuartzModule;
 
 
 public class TestConfiguredJob
@@ -35,13 +32,6 @@ public class TestConfiguredJob
         final Injector injector = Guice.createInjector(
                                                        new LifecycleModule(),
                                                        new TestingQuartzModule(config),
-                                                       new Module() {
-                                                           @Override
-                                                           public void configure(final Binder binder) {
-                                                               binder.disableCircularProxies();
-                                                               binder.requireExplicitBindings();
-                                                           }
-                                                       },
                                                        new NessQuartzModule(config));
 
         injector.injectMembers(this);

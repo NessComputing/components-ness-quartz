@@ -1,9 +1,8 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import java.net.URI;
 
 import junit.framework.Assert;
-import ness.quartz.internal.TestingQuartzModule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +15,8 @@ import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+import com.nesscomputing.quartz.NessQuartzModule;
+import com.nesscomputing.quartz.internal.TestingQuartzModule;
 
 public class TestQuartz
 {

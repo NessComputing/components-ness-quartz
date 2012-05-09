@@ -1,10 +1,9 @@
-package ness.quartz;
+package com.nesscomputing.quartz;
 
 import java.net.URI;
 import java.util.List;
 
 import junit.framework.Assert;
-import ness.quartz.internal.TestingQuartzModule;
 
 import org.joda.time.Duration;
 import org.junit.After;
@@ -24,6 +23,9 @@ import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+import com.nesscomputing.quartz.NessQuartzModule;
+import com.nesscomputing.quartz.QuartzJobBinder;
+import com.nesscomputing.quartz.internal.TestingQuartzModule;
 
 public class TestQuartzJob
 {
