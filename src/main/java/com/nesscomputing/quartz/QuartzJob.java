@@ -18,6 +18,7 @@ package com.nesscomputing.quartz;
 import static com.nesscomputing.quartz.NessQuartzModule.NESS_JOB_NAME;
 
 import java.io.Serializable;
+import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.configuration.Configuration;
@@ -33,6 +34,7 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.skife.config.TimeSpan;
 
 import com.google.inject.name.Named;
 import com.nesscomputing.logging.Log;
@@ -40,6 +42,7 @@ import com.nesscomputing.logging.Log;
 abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
 {
     private static final Log LOG = Log.findLog();
+    private static final Random rand = new Random();
 
     private final JobDataMap jobDataMap = new JobDataMap();
 
@@ -69,6 +72,20 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
     public final SelfType delay(final Duration delay)
     {
         this.delay = delay;
+        return (SelfType) this;
+    }
+
+    /**
+     * Set the time-of-day when the first run of the job will take place.
+     */
+    @SuppressWarnings("unchecked")
+    public final SelfType startTime(final DateTime when, final TimeSpan jitter)
+    {
+        final int startWeekDay = when.getDayOfWeek();
+        final int currentWeekDay = DateTime.now().getDayOfWeek();
+        final int daysTilStart = currentWeekDay > startWeekDay ? (startWeekDay + 7 - currentWeekDay) : startWeekDay - currentWeekDay;
+        final long millisecondsTilStart = when.getMillisOfDay() + daysTilStart * 24 * 3600 * 1000;
+        this.delay = Duration.millis((long)(rand.nextDouble() * jitter.getMillis()) + millisecondsTilStart);
         return (SelfType) this;
     }
 
