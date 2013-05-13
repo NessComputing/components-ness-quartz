@@ -54,7 +54,7 @@ public final class NessQuartzModule extends AbstractModule
 
     public static final String NESS_JOB_NAME = "ness.job";
     public static final Named NESS_JOB_NAMED = Names.named(NESS_JOB_NAME);
-    public static final DateTimeFormatter DAY_HOURS_MINUTES_PARSER = DateTimeFormat.forPattern("E HH:mm").withZoneUTC();
+    public static final DateTimeFormatter DAY_HOURS_MINUTES_PARSER = DateTimeFormat.forPattern("E-HH:mm").withZoneUTC();
 
     private final Config config;
 
