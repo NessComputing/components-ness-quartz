@@ -21,7 +21,10 @@ import java.util.Properties;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -51,6 +54,7 @@ public final class NessQuartzModule extends AbstractModule
 
     public static final String NESS_JOB_NAME = "ness.job";
     public static final Named NESS_JOB_NAMED = Names.named(NESS_JOB_NAME);
+    public static final DateTimeFormatter DAY_HOURS_MINUTES_PARSER = DateTimeFormat.forPattern("E-HH:mm").withZoneUTC();
 
     private final Config config;
 
@@ -117,6 +121,10 @@ public final class NessQuartzModule extends AbstractModule
                 binder.delay(parseDuration(jobConfig, "delay"));
             }
 
+            if (jobConfig.containsKey("startTime")) {
+                binder.startTime(parseStartTime(jobConfig, "startTime"), new TimeSpan("60s"));
+            }
+
             if (jobConfig.containsKey("repeat")) {
                 binder.repeat(parseDuration(jobConfig, "repeat"));
             }
@@ -149,4 +157,9 @@ public final class NessQuartzModule extends AbstractModule
         return new Duration(timeSpan.getMillis());
     }
 
+    private static DateTime parseStartTime(final Configuration config, final String key)
+    {
+        final DateTime dateTime = DAY_HOURS_MINUTES_PARSER.parseDateTime(config.getString(key));
+        return dateTime;
+    }
 }

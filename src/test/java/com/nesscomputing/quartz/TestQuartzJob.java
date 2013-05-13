@@ -20,6 +20,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.junit.After;
 import org.junit.Before;
@@ -27,6 +28,7 @@ import org.junit.Test;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.skife.config.TimeSpan;
 
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
@@ -230,6 +232,30 @@ public class TestQuartzJob
         final Lifecycle lifecycle2 = GuiceJob.getLifecycle();
         Assert.assertNotNull(lifecycle2);
         Assert.assertEquals(lifecycle, lifecycle2);
+    }
+
+    @Test
+    public void testStartingTime() throws Exception
+    {
+        modules.add(new AbstractModule() {
+            @Override
+            public void configure()
+            {
+                bind(GuiceJob.class);
+                DateTime nowPlus2Seconds = DateTime.now().plusSeconds(2);
+                QuartzJobBinder.bindQuartzJob(binder(), GuiceJob.class).startTime(nowPlus2Seconds, new TimeSpan("1s")).register();
+            }
+        });
+
+        Injector injector = Guice.createInjector(modules);
+
+        final Lifecycle lifecycle = injector.getInstance(Lifecycle.class);
+
+        lifecycle.executeTo(LifecycleStage.START_STAGE);
+        Thread.sleep(4000L);
+        lifecycle.executeTo(LifecycleStage.STOP_STAGE);
+
+        Assert.assertTrue(SimpleJob.isExecuted());
     }
 
     static class SimpleJob implements Job
