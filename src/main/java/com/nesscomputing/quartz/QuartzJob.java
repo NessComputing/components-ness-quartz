@@ -25,6 +25,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -52,6 +53,7 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
     private String group = null; // This is the default group in quartz.
     private Boolean enabled = null;
     private String conditional = null;
+    private String cronExpression = null;
 
     private final Class<? extends Job> jobClass;
 
@@ -121,6 +123,17 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
     }
 
     /**
+     * Gives a name for a configuration key to check whether the job
+     * has a cron expression
+     */
+    @SuppressWarnings("unchecked")
+    public final SelfType cronExpression(final String cronExpression)
+    {
+        this.cronExpression = cronExpression;
+        return (SelfType) this;
+    }
+
+    /**
      * Sets a name for the job.
      */
     @SuppressWarnings("unchecked")
@@ -165,6 +178,11 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
         return enabled;
     }
 
+    protected String getCronExpression()
+    {
+        return cronExpression;
+    }
+
     protected Class<? extends Job> getJobClass()
     {
         return jobClass;
@@ -176,12 +194,17 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
             .newTrigger()
             .withIdentity(name, group);
 
-        if (delay != null) {
-            triggerBuilder.startAt(new DateTime().plus(delay).toDate());
+        // If we have a cronExpression, it overrules delay and repeat.
+        if (cronExpression != null) {
+            triggerBuilder.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression));
         }
-
-        if (repeat != null) {
-            triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMilliseconds(repeat.getMillis()).repeatForever());
+        else {
+            if (delay != null) {
+                triggerBuilder.startAt(new DateTime().plus(delay).toDate());
+            }
+            if (repeat != null) {
+                triggerBuilder.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMilliseconds(repeat.getMillis()).repeatForever());
+            }
         }
 
         return triggerBuilder.build();

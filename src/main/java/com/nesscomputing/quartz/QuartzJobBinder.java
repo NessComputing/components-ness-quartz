@@ -70,6 +70,9 @@ public class QuartzJobBinder extends QuartzJob<QuartzJobBinder>
         if (getEnabled() != null) {
             sb.append(format(", enabled=%s", getEnabled()));
         }
+        if (getCronExpression() != null) {
+            sb.append(format(", cronExpression=%s", getCronExpression()));
+        }
         return sb.toString();
     }
 
