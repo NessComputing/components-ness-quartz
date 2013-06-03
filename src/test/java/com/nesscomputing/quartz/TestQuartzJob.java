@@ -258,6 +258,31 @@ public class TestQuartzJob
         Assert.assertTrue(SimpleJob.isExecuted());
     }
 
+    @Test
+    public void testCronJob() throws Exception
+    {
+        modules.add(new AbstractModule() {
+            @Override
+            public void configure()
+            {
+                bind(SimpleJob.class);
+                final int targetSecond = DateTime.now().plusSeconds(2).getSecondOfMinute();
+                final String cronExpression = String.format("%d * * * * ?", targetSecond);
+                QuartzJobBinder.bindQuartzJob(binder(), SimpleJob.class).cronExpression(cronExpression).register();
+            }
+        });
+
+        Injector injector = Guice.createInjector(modules);
+
+        final Lifecycle lifecycle = injector.getInstance(Lifecycle.class);
+
+        lifecycle.executeTo(LifecycleStage.START_STAGE);
+        Thread.sleep(3000L);
+        lifecycle.executeTo(LifecycleStage.STOP_STAGE);
+
+        Assert.assertTrue(SimpleJob.isExecuted());
+    }
+
     static class SimpleJob implements Job
     {
         private static boolean executed = false;
