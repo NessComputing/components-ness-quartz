@@ -133,6 +133,10 @@ public final class NessQuartzModule extends AbstractModule
                 binder.group(jobConfig.getString("group"));
             }
 
+            if (jobConfig.containsKey("cronExpression")) {
+                binder.cronExpression(jobConfig.getString("cronExpression"));
+            }
+
             if (jobConfig.containsKey("enabled")) {
                 binder.enabled(jobConfig.getBoolean("enabled"));
             }
