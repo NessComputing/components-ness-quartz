@@ -13,13 +13,13 @@
     <connection>scm:git:git://github.com/NessComputing/components-ness-quartz.git</connection>
     <developerConnection>scm:git:git@github.com:NessComputing/components-ness-quartz.git</developerConnection>
     <url>http://github.com/NessComputing/components-ness-quartz</url>
-    <tag>ness-quartz-1.0.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <groupId>com.nesscomputing.components</groupId>
   <artifactId>ness-quartz</artifactId>
   <name>quartz</name>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>Wrappers for Quartz job scheduler</description>
 
