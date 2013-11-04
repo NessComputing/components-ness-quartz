@@ -85,8 +85,7 @@ public final class NessQuartzModule extends AbstractModule
         throws SchedulerException
     {
         final Properties quartzProperties = ConfigurationConverter.getProperties(config.getConfiguration());
-        final SchedulerFactory factory = new StdSchedulerFactory(quartzProperties);
-        return factory;
+        return new StdSchedulerFactory(quartzProperties);
     }
 
     private void configureJobs(final Configuration jobConfig)
@@ -163,7 +162,6 @@ public final class NessQuartzModule extends AbstractModule
 
     private static DateTime parseStartTime(final Configuration config, final String key)
     {
-        final DateTime dateTime = DAY_HOURS_MINUTES_PARSER.parseDateTime(config.getString(key));
-        return dateTime;
+        return DAY_HOURS_MINUTES_PARSER.parseDateTime(config.getString(key));
     }
 }

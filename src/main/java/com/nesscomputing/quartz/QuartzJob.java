@@ -85,7 +85,7 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
     {
         final int startWeekDay = when.getDayOfWeek();
         final int currentWeekDay = DateTime.now().getDayOfWeek();
-        final int daysTilStart = currentWeekDay > startWeekDay ? (startWeekDay + 7 - currentWeekDay) : startWeekDay - currentWeekDay;
+        final int daysTilStart = currentWeekDay > startWeekDay ? startWeekDay + 7 - currentWeekDay : startWeekDay - currentWeekDay;
         final long millisecondsTilStart = when.getMillisOfDay() + daysTilStart * 24 * 3600 * 1000;
         this.delay = Duration.millis((long)(rand.nextDouble() * jitter.getMillis()) + millisecondsTilStart);
         return (SelfType) this;
@@ -227,6 +227,7 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
 
     public abstract void submit(final Scheduler scheduler) throws SchedulerException;
 
+    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public void submitConditional(final Scheduler scheduler, @Named(NESS_JOB_NAME) final Configuration nessJobConfiguration)
         throws SchedulerException
     {

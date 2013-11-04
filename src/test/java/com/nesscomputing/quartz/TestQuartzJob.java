@@ -18,11 +18,10 @@ package com.nesscomputing.quartz;
 import java.net.URI;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Job;
@@ -40,8 +39,6 @@ import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
-import com.nesscomputing.quartz.NessQuartzModule;
-import com.nesscomputing.quartz.QuartzJobBinder;
 import com.nesscomputing.quartz.internal.TestingQuartzModule;
 
 public class TestQuartzJob
@@ -86,7 +83,7 @@ public class TestQuartzJob
         Thread.sleep(200L);
         lifecycle.executeTo(LifecycleStage.STOP_STAGE);
 
-        Assert.assertFalse(SimpleJob.isExecuted());
+        Assert.assertTrue(SimpleJob.isExecuted());
     }
 
     @Test

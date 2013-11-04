@@ -17,8 +17,7 @@ package com.nesscomputing.quartz;
 
 import java.net.URI;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.inject.Guice;
@@ -29,7 +28,6 @@ import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
 import com.nesscomputing.quartz.internal.TestingQuartzModule;
-
 
 public class TestConfiguredJob
 {
