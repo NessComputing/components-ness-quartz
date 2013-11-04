@@ -257,7 +257,9 @@ public class TestQuartzJob
         Thread.sleep(4000L);
         lifecycle.executeTo(LifecycleStage.STOP_STAGE);
 
-        Assert.assertFalse(SimpleJob.isExecuted());
+        final Lifecycle lifecycle2 = GuiceJob.getLifecycle();
+        Assert.assertNotNull(lifecycle2);
+        Assert.assertEquals(lifecycle, lifecycle2);
     }
 
     @Test
