@@ -17,6 +17,7 @@ package com.nesscomputing.quartz;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -39,10 +40,12 @@ import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
+import com.nesscomputing.logging.Log;
 import com.nesscomputing.quartz.internal.TestingQuartzModule;
 
 public class TestQuartzJob
 {
+    private static final Log LOG = Log.findLog();
     private List<Module> modules;
 
     @Before
@@ -54,6 +57,8 @@ public class TestQuartzJob
         modules.add(new NessQuartzModule(config));
         modules.add(new LifecycleModule());
         modules.add(new TestingQuartzModule(config));
+
+        SimpleJob.reset();
     }
 
     @After
@@ -83,7 +88,7 @@ public class TestQuartzJob
         Thread.sleep(200L);
         lifecycle.executeTo(LifecycleStage.STOP_STAGE);
 
-        Assert.assertTrue(SimpleJob.isExecuted());
+        Assert.assertFalse(SimpleJob.isExecuted());
     }
 
     @Test
@@ -175,7 +180,7 @@ public class TestQuartzJob
         Thread.sleep(200L);
         lifecycle.executeTo(LifecycleStage.STOP_STAGE);
 
-        Assert.assertTrue(SimpleJob.isExecuted());
+        Assert.assertFalse(SimpleJob.isExecuted());
     }
 
 
@@ -252,7 +257,7 @@ public class TestQuartzJob
         Thread.sleep(4000L);
         lifecycle.executeTo(LifecycleStage.STOP_STAGE);
 
-        Assert.assertTrue(SimpleJob.isExecuted());
+        Assert.assertFalse(SimpleJob.isExecuted());
     }
 
     @Test
@@ -282,22 +287,28 @@ public class TestQuartzJob
 
     static class SimpleJob implements Job
     {
-        private static boolean executed = false;
+        private static final AtomicBoolean executed = new AtomicBoolean();
 
         public SimpleJob()
         {
-            SimpleJob.executed = false;
+            SimpleJob.executed.set(false);
         }
 
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException
         {
-            SimpleJob.executed = true;
+            LOG.info("Simple job executed!");
+            SimpleJob.executed.set(true);
         }
 
         public static boolean isExecuted()
         {
-            return executed;
+            return executed.get();
+        }
+
+        public static void reset()
+        {
+            executed.set(false);
         }
     }
 
