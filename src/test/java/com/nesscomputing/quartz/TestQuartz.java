@@ -17,9 +17,8 @@ package com.nesscomputing.quartz;
 
 import java.net.URI;
 
-import junit.framework.Assert;
-
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;
@@ -30,7 +29,6 @@ import com.nesscomputing.config.Config;
 import com.nesscomputing.lifecycle.Lifecycle;
 import com.nesscomputing.lifecycle.LifecycleStage;
 import com.nesscomputing.lifecycle.guice.LifecycleModule;
-import com.nesscomputing.quartz.NessQuartzModule;
 import com.nesscomputing.quartz.internal.TestingQuartzModule;
 
 public class TestQuartz

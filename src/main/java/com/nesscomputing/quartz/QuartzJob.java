@@ -17,9 +17,13 @@ package com.nesscomputing.quartz;
 
 import static com.nesscomputing.quartz.NessQuartzModule.NESS_JOB_NAME;
 
+import static org.joda.time.DateTimeConstants.DAYS_PER_WEEK;
+import static org.joda.time.DateTimeConstants.MILLIS_PER_DAY;
+import static org.joda.time.DateTimeConstants.MILLIS_PER_WEEK;
+
 import java.io.Serializable;
-import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
@@ -37,13 +41,13 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.skife.config.TimeSpan;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.name.Named;
 import com.nesscomputing.logging.Log;
 
 abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
 {
     private static final Log LOG = Log.findLog();
-    private static final Random rand = new Random();
 
     private final JobDataMap jobDataMap = new JobDataMap();
 
@@ -83,11 +87,21 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
     @SuppressWarnings("unchecked")
     public final SelfType startTime(final DateTime when, final TimeSpan jitter)
     {
+        // Find the current week day in the same time zone as the "when" time passed in.
+        final DateTime now = new DateTime().withZone(when.getZone());
+
         final int startWeekDay = when.getDayOfWeek();
-        final int currentWeekDay = DateTime.now().getDayOfWeek();
-        final int daysTilStart = currentWeekDay > startWeekDay ? (startWeekDay + 7 - currentWeekDay) : startWeekDay - currentWeekDay;
-        final long millisecondsTilStart = when.getMillisOfDay() + daysTilStart * 24 * 3600 * 1000;
-        this.delay = Duration.millis((long)(rand.nextDouble() * jitter.getMillis()) + millisecondsTilStart);
+        final int currentWeekDay = now.getDayOfWeek();
+
+        // ( x + n ) % n is x for x > 0 and n - x for x < 0.
+        final int daysTilStart = (startWeekDay - currentWeekDay + DAYS_PER_WEEK) % DAYS_PER_WEEK;
+        Preconditions.checkState(daysTilStart >= 0 && daysTilStart < DAYS_PER_WEEK, "daysTilStart must be 0..%s, but is %s", DAYS_PER_WEEK, daysTilStart);
+
+        // same trick as above, add a full week in millis and do the modulo.
+        final long millisecondsTilStart = (when.getMillisOfDay() - now.getMillisOfDay() + daysTilStart * MILLIS_PER_DAY + MILLIS_PER_WEEK) % MILLIS_PER_WEEK;
+        Preconditions.checkState(millisecondsTilStart >= 0 && millisecondsTilStart < MILLIS_PER_WEEK, "millisecondsTilStart must be 0..%s, but is %s", MILLIS_PER_WEEK, millisecondsTilStart);
+
+        this.delay = Duration.millis((long)(ThreadLocalRandom.current().nextDouble() * jitter.getMillis()) + millisecondsTilStart);
         return (SelfType) this;
     }
 
@@ -227,6 +241,7 @@ abstract class QuartzJob<SelfType extends QuartzJob<SelfType>>
 
     public abstract void submit(final Scheduler scheduler) throws SchedulerException;
 
+    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public void submitConditional(final Scheduler scheduler, @Named(NESS_JOB_NAME) final Configuration nessJobConfiguration)
         throws SchedulerException
     {
